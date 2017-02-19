@@ -26,7 +26,7 @@
 void wait_for_tx_slot()
 {
     // Spin while the Tx FIFO is full
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & TX_FIFO_FULL)
 	{
 		// NOOP
 	}
@@ -36,7 +36,7 @@ void wait_for_tx_slot()
 void wait_for_uart_idle()
 {
     //Spin while the UART is busy transmitting
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & UART_BUSY_TX)
 	{
 		//NOOP
 	}
@@ -46,7 +46,7 @@ void wait_for_uart_idle()
 void wait_for_rx_slot()
 {
     // Spin while the Rx FIFO is full
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & RX_FIFO_FULL)
 	{
 		//NOOP
 	}
@@ -56,7 +56,7 @@ void wait_for_rx_slot()
 void wait_for_rx_has_char()
 {
     // Spin while the Rx FIFO is empty
-    while (((volatile uint32_t)uart[UART0_FR]) & <<PRELAB - MISSING #DEF>>)
+    while (((volatile uint32_t)uart[UART0_FR]) & TX_FIFO_EMPTY)
 	{
 		//NOOP
 	}
@@ -84,7 +84,10 @@ void init_uart()
     // that GPIO 14 is TXD, GPIO 15 is RXD, and they must be set
     // to use alternate function 0 in select register 1.
     // The bits must be set to 100 for GPIO 15 and 14.
-    gpio[GPFSEL1] |= 0x<<PRELAB - FILL IN THE HEX>>;
+    //gpio[GPFSEL1] |= 0x2000;
+    gpio[GPFSEL1] |= (100 << 12) ; //I used bitshifting as opposed to 
+                                   //a hex value because I'm not totally comfortable with 
+                                   //using a raw hex value like that. I think it's 0x2000
 
     // According to the BCM2835 manual page 185, we
     // need to do the following to enable UART.
@@ -130,8 +133,8 @@ void init_uart()
     // 48000000 / (16 * 115200), which is 26.0416, or about 26.
     // The fractional part of the register is 0.0416
     // So FBRD = 0.0416 * 64 + 0.5 which is 1.3312, or ~1.
-    uart[UART0_IBRD] = <<PRELAB - PROVIDE THE CORRECT INTEGER>>;
-    uart[UART0_FBRD] = <<PRELAB - PROVIDE THE CORRECT INTEGER>>;
+    uart[UART0_IBRD] = 26;
+    uart[UART0_FBRD] = 1;
     // For 9600 baud - stability check - use this for debugging purposes
     //uart[UART0_IBRD] = 312;
     //uart[UART0_FBRD] = 32;
@@ -157,9 +160,9 @@ void init_uart()
 	*/
 	
     // Enable Receive, Enable Tx, Enable UART.
-    uart[UART0_CR] |= ((<<PRELAB - RX ENABLE>>) | 
-									(<<PRELAB - TX ENABLE>>) | 
-									(<<PRELAB - UART ENABLE>>));
+    uart[UART0_CR] |= ((0x100) | //00000000000000000000000100000000
+					   (0x80) |  //00000000000000000000000010000000
+					   (0x1));   //00000000000000000000000000000001
 }
 
 /// Gets a single character from the UART port.
