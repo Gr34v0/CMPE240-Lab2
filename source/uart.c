@@ -144,8 +144,8 @@ void init_uart()
 	*/
 	
     //Enable FIFOs and set word length by shifting in '1's
-    uart[UART0_LCRH] |= (<<PRELAB - ENABLE TX/RX FIFOS>>) |
-									(<<PRELAB - SET WORD LENGTH>>);
+    uart[UART0_LCRH] |= (0x10) |
+						(0x60); // BCM2835 Manual page 184
 
     // Mask all interrupts
     uart[UART0_IMSC] |= (
