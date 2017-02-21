@@ -176,7 +176,7 @@ extern char get_char()
 	
 	// Read the data register.
     // Only care about the last 8 bits, so mask them off.
-    return (char)(uart[UART0_DR] <<APPLY BITWISE MASK HERE>>);
+    return (char)(uart[UART0_DR] & 00000000);
 }
 
 /// Writes a single character to the uart port.
