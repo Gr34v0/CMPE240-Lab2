@@ -1,133 +1,132 @@
-   1              		.arch armv7-a
-   2              		.eabi_attribute 28, 1
-   3              		.fpu neon-vfpv4
-   4              		.eabi_attribute 20, 1
-   5              		.eabi_attribute 21, 1
-   6              		.eabi_attribute 23, 3
-   7              		.eabi_attribute 24, 1
-   8              		.eabi_attribute 25, 1
-   9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 2
-  11              		.eabi_attribute 34, 1
-  12              		.eabi_attribute 18, 4
-  13              		.file	"gpio.c"
-  14              		.text
-  15              		.align	2
-  16              		.global	convert_pin_to_gpio
-  17              		.syntax unified
-  18              		.arm
-  20              	convert_pin_to_gpio:
-  21              		@ args = 0, pretend = 0, frame = 0
-  22              		@ frame_needed = 0, uses_anonymous_args = 0
-  23              		@ link register save eliminated.
-  24 0000 7030EFE6 		uxtb	r3, r0
-  25 0004 280053E3 		cmp	r3, #40
-  26 0008 00300093 		movwls	r3, #:lower16:.LANCHOR0
-  27 000c FF00A083 		movhi	r0, #255
-  28 0010 00304093 		movtls	r3, #:upper16:.LANCHOR0
-  29 0014 0000D397 		ldrbls	r0, [r3, r0]	@ zero_extendqisi2
-  30 0018 7000AFE6 		sxtb	r0, r0
-  31 001c 1EFF2FE1 		bx	lr
-  33              		.align	2
-  34              		.global	convert_gpio_to_pin
-  35              		.syntax unified
-  36              		.arm
-  38              	convert_gpio_to_pin:
-  39              		@ args = 0, pretend = 0, frame = 0
-  40              		@ frame_needed = 0, uses_anonymous_args = 0
-  41              		@ link register save eliminated.
-  42 0020 7030EFE6 		uxtb	r3, r0
-  43 0024 1C0053E3 		cmp	r3, #28
-  44 0028 00300093 		movwls	r3, #:lower16:.LANCHOR0
-  45 002c FF00A083 		movhi	r0, #255
-  46 0030 00304093 		movtls	r3, #:upper16:.LANCHOR0
-  47 0034 00308390 		addls	r3, r3, r0
-  48 0038 2800D395 		ldrbls	r0, [r3, #40]	@ zero_extendqisi2
-  49 003c 7000AFE6 		sxtb	r0, r0
-  50 0040 1EFF2FE1 		bx	lr
-  52              		.align	2
-  53              		.global	mmio_write
-  54              		.syntax unified
-  55              		.arm
-  57              	mmio_write:
-  58              		@ args = 0, pretend = 0, frame = 0
-  59              		@ frame_needed = 0, uses_anonymous_args = 0
-  60              		@ link register save eliminated.
-  61 0044 001080E5 		str	r1, [r0]
-  62 0048 1EFF2FE1 		bx	lr
-  64              		.global	gpio_to_pin_array
-  65              		.global	pin_to_gpio_array
-  66              		.data
-  67              		.align	2
-  68              		.set	.LANCHOR0,. + 0
-  71              	pin_to_gpio_array:
-  72 0000 FF       		.byte	-1
-  73 0001 FF       		.byte	-1
-  74 0002 02       		.byte	2
-  75 0003 FF       		.byte	-1
-  76 0004 03       		.byte	3
-  77 0005 FF       		.byte	-1
-  78 0006 04       		.byte	4
-  79 0007 0E       		.byte	14
-  80 0008 FF       		.byte	-1
-  81 0009 0F       		.byte	15
-  82 000a 11       		.byte	17
-  83 000b 12       		.byte	18
-  84 000c 1B       		.byte	27
-  85 000d FF       		.byte	-1
-  86 000e 16       		.byte	22
-  87 000f 17       		.byte	23
-  88 0010 FF       		.byte	-1
-  89 0011 18       		.byte	24
-  90 0012 0A       		.byte	10
-  91 0013 FF       		.byte	-1
-  92 0014 09       		.byte	9
-  93 0015 19       		.byte	25
-  94 0016 0B       		.byte	11
-  95 0017 08       		.byte	8
-  96 0018 FF       		.byte	-1
-  97 0019 07       		.byte	7
-  98 001a FF       		.byte	-1
-  99 001b FF       		.byte	-1
- 100 001c 05       		.byte	5
- 101 001d FF       		.byte	-1
- 102 001e 06       		.byte	6
- 103 001f 0C       		.byte	12
- 104 0020 0D       		.byte	13
- 105 0021 FF       		.byte	-1
- 106 0022 13       		.byte	19
- 107 0023 10       		.byte	16
- 108 0024 1A       		.byte	26
- 109 0025 14       		.byte	20
- 110 0026 FF       		.byte	-1
- 111 0027 15       		.byte	21
- 114              	gpio_to_pin_array:
- 115 0028 FF       		.byte	-1
- 116 0029 FF       		.byte	-1
- 117 002a 03       		.byte	3
- 118 002b 05       		.byte	5
- 119 002c 07       		.byte	7
- 120 002d 1D       		.byte	29
- 121 002e 1F       		.byte	31
- 122 002f 1A       		.byte	26
- 123 0030 18       		.byte	24
- 124 0031 15       		.byte	21
- 125 0032 13       		.byte	19
- 126 0033 17       		.byte	23
- 127 0034 20       		.byte	32
- 128 0035 21       		.byte	33
- 129 0036 08       		.byte	8
- 130 0037 0A       		.byte	10
- 131 0038 24       		.byte	36
- 132 0039 0B       		.byte	11
- 133 003a 0C       		.byte	12
- 134 003b 23       		.byte	35
- 135 003c 26       		.byte	38
- 136 003d 28       		.byte	40
- 137 003e 0F       		.byte	15
- 138 003f 10       		.byte	16
- 139 0040 12       		.byte	18
- 140 0041 16       		.byte	22
- 141 0042 25       		.byte	37
- 142 0043 0D       		.byte	13
- 143              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"
+   1              		.arch armv8-a
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 2
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"gpio.c"
+  13              		.text
+  14              		.align	2
+  15              		.global	convert_pin_to_gpio
+  16              		.syntax unified
+  17              		.arm
+  19              	convert_pin_to_gpio:
+  20              		@ args = 0, pretend = 0, frame = 0
+  21              		@ frame_needed = 0, uses_anonymous_args = 0
+  22              		@ link register save eliminated.
+  23 0000 7030EFE6 		uxtb	r3, r0
+  24 0004 280053E3 		cmp	r3, #40
+  25 0008 00300093 		movwls	r3, #:lower16:.LANCHOR0
+  26 000c FF00A083 		movhi	r0, #255
+  27 0010 00304093 		movtls	r3, #:upper16:.LANCHOR0
+  28 0014 0000D397 		ldrbls	r0, [r3, r0]	@ zero_extendqisi2
+  29 0018 7000AFE6 		sxtb	r0, r0
+  30 001c 1EFF2FE1 		bx	lr
+  32              		.align	2
+  33              		.global	convert_gpio_to_pin
+  34              		.syntax unified
+  35              		.arm
+  37              	convert_gpio_to_pin:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0020 7030EFE6 		uxtb	r3, r0
+  42 0024 1C0053E3 		cmp	r3, #28
+  43 0028 00300093 		movwls	r3, #:lower16:.LANCHOR0
+  44 002c FF00A083 		movhi	r0, #255
+  45 0030 00304093 		movtls	r3, #:upper16:.LANCHOR0
+  46 0034 00308390 		addls	r3, r3, r0
+  47 0038 2800D395 		ldrbls	r0, [r3, #40]	@ zero_extendqisi2
+  48 003c 7000AFE6 		sxtb	r0, r0
+  49 0040 1EFF2FE1 		bx	lr
+  51              		.align	2
+  52              		.global	mmio_write
+  53              		.syntax unified
+  54              		.arm
+  56              	mmio_write:
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  60 0044 001080E5 		str	r1, [r0]
+  61 0048 1EFF2FE1 		bx	lr
+  63              		.global	gpio_to_pin_array
+  64              		.global	pin_to_gpio_array
+  65              		.data
+  66              		.align	2
+  67              		.set	.LANCHOR0,. + 0
+  70              	pin_to_gpio_array:
+  71 0000 FF       		.byte	-1
+  72 0001 FF       		.byte	-1
+  73 0002 02       		.byte	2
+  74 0003 FF       		.byte	-1
+  75 0004 03       		.byte	3
+  76 0005 FF       		.byte	-1
+  77 0006 04       		.byte	4
+  78 0007 0E       		.byte	14
+  79 0008 FF       		.byte	-1
+  80 0009 0F       		.byte	15
+  81 000a 11       		.byte	17
+  82 000b 12       		.byte	18
+  83 000c 1B       		.byte	27
+  84 000d FF       		.byte	-1
+  85 000e 16       		.byte	22
+  86 000f 17       		.byte	23
+  87 0010 FF       		.byte	-1
+  88 0011 18       		.byte	24
+  89 0012 0A       		.byte	10
+  90 0013 FF       		.byte	-1
+  91 0014 09       		.byte	9
+  92 0015 19       		.byte	25
+  93 0016 0B       		.byte	11
+  94 0017 08       		.byte	8
+  95 0018 FF       		.byte	-1
+  96 0019 07       		.byte	7
+  97 001a FF       		.byte	-1
+  98 001b FF       		.byte	-1
+  99 001c 05       		.byte	5
+ 100 001d FF       		.byte	-1
+ 101 001e 06       		.byte	6
+ 102 001f 0C       		.byte	12
+ 103 0020 0D       		.byte	13
+ 104 0021 FF       		.byte	-1
+ 105 0022 13       		.byte	19
+ 106 0023 10       		.byte	16
+ 107 0024 1A       		.byte	26
+ 108 0025 14       		.byte	20
+ 109 0026 FF       		.byte	-1
+ 110 0027 15       		.byte	21
+ 113              	gpio_to_pin_array:
+ 114 0028 FF       		.byte	-1
+ 115 0029 FF       		.byte	-1
+ 116 002a 03       		.byte	3
+ 117 002b 05       		.byte	5
+ 118 002c 07       		.byte	7
+ 119 002d 1D       		.byte	29
+ 120 002e 1F       		.byte	31
+ 121 002f 1A       		.byte	26
+ 122 0030 18       		.byte	24
+ 123 0031 15       		.byte	21
+ 124 0032 13       		.byte	19
+ 125 0033 17       		.byte	23
+ 126 0034 20       		.byte	32
+ 127 0035 21       		.byte	33
+ 128 0036 08       		.byte	8
+ 129 0037 0A       		.byte	10
+ 130 0038 24       		.byte	36
+ 131 0039 0B       		.byte	11
+ 132 003a 0C       		.byte	12
+ 133 003b 23       		.byte	35
+ 134 003c 26       		.byte	38
+ 135 003d 28       		.byte	40
+ 136 003e 0F       		.byte	15
+ 137 003f 10       		.byte	16
+ 138 0040 12       		.byte	18
+ 139 0041 16       		.byte	22
+ 140 0042 25       		.byte	37
+ 141 0043 0D       		.byte	13
+ 142              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"

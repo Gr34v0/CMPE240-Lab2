@@ -1,220 +1,272 @@
-   1              		.arch armv7-a
-   2              		.eabi_attribute 28, 1
-   3              		.fpu neon-vfpv4
-   4              		.eabi_attribute 20, 1
-   5              		.eabi_attribute 21, 1
-   6              		.eabi_attribute 23, 3
-   7              		.eabi_attribute 24, 1
-   8              		.eabi_attribute 25, 1
-   9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 2
-  11              		.eabi_attribute 34, 1
-  12              		.eabi_attribute 18, 4
-  13              		.file	"uart.c"
-  14              		.text
-  15              		.align	2
-  16              		.global	wait_for_tx_slot
-  17              		.syntax unified
-  18              		.arm
-  20              	wait_for_tx_slot:
-  21              		@ args = 0, pretend = 0, frame = 0
-  22              		@ frame_needed = 0, uses_anonymous_args = 0
-  23              		@ link register save eliminated.
-  24 0000 012AA0E3 		mov	r2, #4096
-  25 0004 202F43E3 		movt	r2, 16160
-  26              	.L2:
-  27 0008 183092E5 		ldr	r3, [r2, #24]
-  28 000c 200013E3 		tst	r3, #32
-  29 0010 FCFFFF1A 		bne	.L2
-  30 0014 1EFF2FE1 		bx	lr
-  32              		.align	2
-  33              		.global	wait_for_uart_idle
-  34              		.syntax unified
-  35              		.arm
-  37              	wait_for_uart_idle:
-  38              		@ args = 0, pretend = 0, frame = 0
-  39              		@ frame_needed = 0, uses_anonymous_args = 0
-  40              		@ link register save eliminated.
-  41 0018 012AA0E3 		mov	r2, #4096
-  42 001c 202F43E3 		movt	r2, 16160
-  43              	.L6:
-  44 0020 183092E5 		ldr	r3, [r2, #24]
-  45 0024 080013E3 		tst	r3, #8
-  46 0028 FCFFFF1A 		bne	.L6
-  47 002c 1EFF2FE1 		bx	lr
-  49              		.align	2
-  50              		.global	wait_for_rx_slot
-  51              		.syntax unified
-  52              		.arm
-  54              	wait_for_rx_slot:
-  55              		@ args = 0, pretend = 0, frame = 0
-  56              		@ frame_needed = 0, uses_anonymous_args = 0
-  57              		@ link register save eliminated.
-  58 0030 012AA0E3 		mov	r2, #4096
-  59 0034 202F43E3 		movt	r2, 16160
-  60              	.L9:
-  61 0038 183092E5 		ldr	r3, [r2, #24]
-  62 003c 400013E3 		tst	r3, #64
-  63 0040 FCFFFF1A 		bne	.L9
-  64 0044 1EFF2FE1 		bx	lr
-  66              		.align	2
-  67              		.global	wait_for_rx_has_char
-  68              		.syntax unified
-  69              		.arm
-  71              	wait_for_rx_has_char:
-  72              		@ args = 0, pretend = 0, frame = 0
-  73              		@ frame_needed = 0, uses_anonymous_args = 0
-  74              		@ link register save eliminated.
-  75 0048 012AA0E3 		mov	r2, #4096
-  76 004c 202F43E3 		movt	r2, 16160
-  77              	.L12:
-  78 0050 183092E5 		ldr	r3, [r2, #24]
-  79 0054 800013E3 		tst	r3, #128
-  80 0058 FCFFFF1A 		bne	.L12
-  81 005c 1EFF2FE1 		bx	lr
-  83              		.align	2
-  84              		.global	delay
-  85              		.syntax unified
-  86              		.arm
-  88              	delay:
-  89              		@ args = 0, pretend = 0, frame = 8
-  90              		@ frame_needed = 0, uses_anonymous_args = 0
-  91              		@ link register save eliminated.
-  92 0060 08D04DE2 		sub	sp, sp, #8
-  93 0064 04008DE5 		str	r0, [sp, #4]
-  94 0068 04309DE5 		ldr	r3, [sp, #4]
-  95 006c 000053E3 		cmp	r3, #0
-  96 0070 0500000A 		beq	.L14
-  97              	.L17:
-  98 0074 04309DE5 		ldr	r3, [sp, #4]
-  99 0078 013043E2 		sub	r3, r3, #1
- 100 007c 04308DE5 		str	r3, [sp, #4]
- 101 0080 04309DE5 		ldr	r3, [sp, #4]
- 102 0084 000053E3 		cmp	r3, #0
- 103 0088 F9FFFF1A 		bne	.L17
- 104              	.L14:
- 105 008c 08D08DE2 		add	sp, sp, #8
- 106              		@ sp needed
- 107 0090 1EFF2FE1 		bx	lr
- 109              		.align	2
- 110              		.global	init_uart
- 111              		.syntax unified
- 112              		.arm
- 114              	init_uart:
- 115              		@ args = 0, pretend = 0, frame = 0
- 116              		@ frame_needed = 0, uses_anonymous_args = 0
- 117              		@ link register save eliminated.
- 118 0094 0020A0E3 		mov	r2, #0
- 119 0098 013AA0E3 		mov	r3, #4096
- 120 009c 202F43E3 		movt	r2, 16160
- 121 00a0 00C0A0E3 		mov	ip, #0
- 122 00a4 203F43E3 		movt	r3, 16160
- 123 00a8 040092E5 		ldr	r0, [r2, #4]
- 124 00ac 0310A0E1 		mov	r1, r3
- 125 00b0 190980E3 		orr	r0, r0, #409600
- 126 00b4 040082E5 		str	r0, [r2, #4]
- 127 00b8 30C083E5 		str	ip, [r3, #48]
- 128              	.L21:
- 129 00bc 183091E5 		ldr	r3, [r1, #24]
- 130 00c0 083013E2 		ands	r3, r3, #8
- 131 00c4 FCFFFF1A 		bne	.L21
- 132 00c8 2CC091E5 		ldr	ip, [r1, #44]
- 133 00cc 0000A0E3 		mov	r0, #0
- 134 00d0 200F43E3 		movt	r0, 16160
- 135 00d4 9620A0E3 		mov	r2, #150
- 136 00d8 2CC081E5 		str	ip, [r1, #44]
- 137 00dc 943080E5 		str	r3, [r0, #148]
- 138              	.L22:
- 139 00e0 012052E2 		subs	r2, r2, #1
- 140 00e4 FDFFFF1A 		bne	.L22
- 141 00e8 0020A0E3 		mov	r2, #0
- 142 00ec 9630A0E3 		mov	r3, #150
- 143 00f0 202F43E3 		movt	r2, 16160
- 144 00f4 0319A0E3 		mov	r1, #49152
- 145 00f8 981082E5 		str	r1, [r2, #152]
- 146              	.L23:
- 147 00fc 013053E2 		subs	r3, r3, #1
- 148 0100 FDFFFF1A 		bne	.L23
- 149 0104 0010A0E3 		mov	r1, #0
- 150 0108 012AA0E3 		mov	r2, #4096
- 151 010c 201F43E3 		movt	r1, 16160
- 152 0110 FFC700E3 		movw	ip, #2047
- 153 0114 202F43E3 		movt	r2, 16160
- 154 0118 1A00A0E3 		mov	r0, #26
- 155 011c 983081E5 		str	r3, [r1, #152]
- 156 0120 0130A0E3 		mov	r3, #1
- 157 0124 44C082E5 		str	ip, [r2, #68]
- 158 0128 240082E5 		str	r0, [r2, #36]
- 159 012c 283082E5 		str	r3, [r2, #40]
- 160 0130 2C3092E5 		ldr	r3, [r2, #44]
- 161 0134 703083E3 		orr	r3, r3, #112
- 162 0138 2C3082E5 		str	r3, [r2, #44]
- 163 013c 383092E5 		ldr	r3, [r2, #56]
- 164 0140 7F3E83E3 		orr	r3, r3, #2032
- 165 0144 023083E3 		orr	r3, r3, #2
- 166 0148 383082E5 		str	r3, [r2, #56]
- 167 014c 303092E5 		ldr	r3, [r2, #48]
- 168 0150 063D83E3 		orr	r3, r3, #384
- 169 0154 013083E3 		orr	r3, r3, #1
- 170 0158 303082E5 		str	r3, [r2, #48]
- 171 015c 1EFF2FE1 		bx	lr
- 173              		.align	2
- 174              		.global	get_char
- 175              		.syntax unified
- 176              		.arm
- 178              	get_char:
- 179              		@ args = 0, pretend = 0, frame = 0
- 180              		@ frame_needed = 0, uses_anonymous_args = 0
- 181              		@ link register save eliminated.
- 182 0160 9600A0E3 		mov	r0, #150
+   1              		.arch armv8-a
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 2
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"uart.c"
+  13              		.text
+  14              		.align	2
+  15              		.global	wait_for_tx_slot
+  16              		.syntax unified
+  17              		.arm
+  19              	wait_for_tx_slot:
+  20              		@ args = 0, pretend = 0, frame = 0
+  21              		@ frame_needed = 0, uses_anonymous_args = 0
+  22              		@ link register save eliminated.
+  23 0000 012AA0E3 		mov	r2, #4096
+  24 0004 202F43E3 		movt	r2, 16160
+  25              	.L2:
+  26 0008 183092E5 		ldr	r3, [r2, #24]
+  27 000c 200013E3 		tst	r3, #32
+  28 0010 FCFFFF1A 		bne	.L2
+  29 0014 1EFF2FE1 		bx	lr
+  31              		.align	2
+  32              		.global	wait_for_uart_idle
+  33              		.syntax unified
+  34              		.arm
+  36              	wait_for_uart_idle:
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 0, uses_anonymous_args = 0
+  39              		@ link register save eliminated.
+  40 0018 012AA0E3 		mov	r2, #4096
+  41 001c 202F43E3 		movt	r2, 16160
+  42              	.L6:
+  43 0020 183092E5 		ldr	r3, [r2, #24]
+  44 0024 080013E3 		tst	r3, #8
+  45 0028 FCFFFF1A 		bne	.L6
+  46 002c 1EFF2FE1 		bx	lr
+  48              		.align	2
+  49              		.global	wait_for_rx_slot
+  50              		.syntax unified
+  51              		.arm
+  53              	wait_for_rx_slot:
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57 0030 012AA0E3 		mov	r2, #4096
+  58 0034 202F43E3 		movt	r2, 16160
+  59              	.L9:
+  60 0038 183092E5 		ldr	r3, [r2, #24]
+  61 003c 400013E3 		tst	r3, #64
+  62 0040 FCFFFF1A 		bne	.L9
+  63 0044 1EFF2FE1 		bx	lr
+  65              		.align	2
+  66              		.global	wait_for_rx_has_char
+  67              		.syntax unified
+  68              		.arm
+  70              	wait_for_rx_has_char:
+  71              		@ args = 0, pretend = 0, frame = 0
+  72              		@ frame_needed = 0, uses_anonymous_args = 0
+  73              		@ link register save eliminated.
+  74 0048 012AA0E3 		mov	r2, #4096
+  75 004c 202F43E3 		movt	r2, 16160
+  76              	.L12:
+  77 0050 183092E5 		ldr	r3, [r2, #24]
+  78 0054 800013E3 		tst	r3, #128
+  79 0058 FCFFFF1A 		bne	.L12
+  80 005c 1EFF2FE1 		bx	lr
+  82              		.align	2
+  83              		.global	delay
+  84              		.syntax unified
+  85              		.arm
+  87              	delay:
+  88              		@ args = 0, pretend = 0, frame = 8
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              		@ link register save eliminated.
+  91 0060 08D04DE2 		sub	sp, sp, #8
+  92 0064 04008DE5 		str	r0, [sp, #4]
+  93 0068 04309DE5 		ldr	r3, [sp, #4]
+  94 006c 000053E3 		cmp	r3, #0
+  95 0070 0500000A 		beq	.L14
+  96              	.L17:
+  97 0074 04309DE5 		ldr	r3, [sp, #4]
+  98 0078 013043E2 		sub	r3, r3, #1
+  99 007c 04308DE5 		str	r3, [sp, #4]
+ 100 0080 04309DE5 		ldr	r3, [sp, #4]
+ 101 0084 000053E3 		cmp	r3, #0
+ 102 0088 F9FFFF1A 		bne	.L17
+ 103              	.L14:
+ 104 008c 08D08DE2 		add	sp, sp, #8
+ 105              		@ sp needed
+ 106 0090 1EFF2FE1 		bx	lr
+ 108              		.align	2
+ 109              		.global	init_uart
+ 110              		.syntax unified
+ 111              		.arm
+ 113              	init_uart:
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116 0094 0020A0E3 		mov	r2, #0
+ 117 0098 202F43E3 		movt	r2, 16160
+ 118 009c 013AA0E3 		mov	r3, #4096
+ 119 00a0 203F43E3 		movt	r3, 16160
+ 120 00a4 00C0A0E3 		mov	ip, #0
+ 121 00a8 0310A0E1 		mov	r1, r3
+ 122 00ac 040092E5 		ldr	r0, [r2, #4]
+ 123 00b0 190980E3 		orr	r0, r0, #409600
+ 124 00b4 040082E5 		str	r0, [r2, #4]
+ 125 00b8 30C083E5 		str	ip, [r3, #48]
+ 126              	.L21:
+ 127 00bc 183091E5 		ldr	r3, [r1, #24]
+ 128 00c0 083013E2 		ands	r3, r3, #8
+ 129 00c4 FCFFFF1A 		bne	.L21
+ 130 00c8 0000A0E3 		mov	r0, #0
+ 131 00cc 200F43E3 		movt	r0, 16160
+ 132 00d0 2CC091E5 		ldr	ip, [r1, #44]
+ 133 00d4 9620A0E3 		mov	r2, #150
+ 134 00d8 2CC081E5 		str	ip, [r1, #44]
+ 135 00dc 943080E5 		str	r3, [r0, #148]
+ 136              	.L22:
+ 137 00e0 012052E2 		subs	r2, r2, #1
+ 138 00e4 FDFFFF1A 		bne	.L22
+ 139 00e8 0020A0E3 		mov	r2, #0
+ 140 00ec 202F43E3 		movt	r2, 16160
+ 141 00f0 0319A0E3 		mov	r1, #49152
+ 142 00f4 9630A0E3 		mov	r3, #150
+ 143 00f8 981082E5 		str	r1, [r2, #152]
+ 144              	.L23:
+ 145 00fc 013053E2 		subs	r3, r3, #1
+ 146 0100 FDFFFF1A 		bne	.L23
+ 147 0104 0010A0E3 		mov	r1, #0
+ 148 0108 201F43E3 		movt	r1, 16160
+ 149 010c 012AA0E3 		mov	r2, #4096
+ 150 0110 202F43E3 		movt	r2, 16160
+ 151 0114 04E02DE5 		str	lr, [sp, #-4]!
+ 152 0118 0100A0E3 		mov	r0, #1
+ 153 011c FFE700E3 		movw	lr, #2047
+ 154 0120 1AC0A0E3 		mov	ip, #26
+ 155 0124 983081E5 		str	r3, [r1, #152]
+ 156 0128 44E082E5 		str	lr, [r2, #68]
+ 157 012c 24C082E5 		str	ip, [r2, #36]
+ 158 0130 280082E5 		str	r0, [r2, #40]
+ 159 0134 2C3092E5 		ldr	r3, [r2, #44]
+ 160 0138 703083E3 		orr	r3, r3, #112
+ 161 013c 2C3082E5 		str	r3, [r2, #44]
+ 162 0140 383092E5 		ldr	r3, [r2, #56]
+ 163 0144 7F3E83E3 		orr	r3, r3, #2032
+ 164 0148 023083E3 		orr	r3, r3, #2
+ 165 014c 383082E5 		str	r3, [r2, #56]
+ 166 0150 303092E5 		ldr	r3, [r2, #48]
+ 167 0154 063D83E3 		orr	r3, r3, #384
+ 168 0158 003083E1 		orr	r3, r3, r0
+ 169 015c 303082E5 		str	r3, [r2, #48]
+ 170 0160 04F09DE4 		ldr	pc, [sp], #4
+ 172              		.align	2
+ 173              		.global	get_char
+ 174              		.syntax unified
+ 175              		.arm
+ 177              	get_char:
+ 178              		@ args = 0, pretend = 0, frame = 0
+ 179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 180              		@ link register save eliminated.
+ 181 0164 012AA0E3 		mov	r2, #4096
+ 182 0168 202F43E3 		movt	r2, 16160
  183              	.L35:
- 184 0164 010050E2 		subs	r0, r0, #1
- 185 0168 FDFFFF1A 		bne	.L35
- 186 016c 013AA0E3 		mov	r3, #4096
- 187 0170 203F43E3 		movt	r3, 16160
- 188 0174 003093E5 		ldr	r3, [r3]
- 189 0178 1EFF2FE1 		bx	lr
- 191              		.align	2
- 192              		.global	put_char
- 193              		.syntax unified
- 194              		.arm
- 196              	put_char:
- 197              		@ args = 0, pretend = 0, frame = 0
- 198              		@ frame_needed = 0, uses_anonymous_args = 0
- 199              		@ link register save eliminated.
- 200 017c 9630A0E3 		mov	r3, #150
- 201              	.L41:
- 202 0180 013053E2 		subs	r3, r3, #1
- 203 0184 FDFFFF1A 		bne	.L41
- 204 0188 1EFF2FE1 		bx	lr
- 206              		.align	2
- 207              		.global	get_string
- 208              		.syntax unified
- 209              		.arm
- 211              	get_string:
- 212              		@ args = 0, pretend = 0, frame = 0
- 213              		@ frame_needed = 0, uses_anonymous_args = 0
- 214              		@ link register save eliminated.
- 215 018c 010051E3 		cmp	r1, #1
- 216 0190 0000000A 		beq	.L45
- 217              	.L47:
- 218 0194 FEFFFFEA 		b	.L47
- 219              	.L45:
- 220 0198 0030A0E3 		mov	r3, #0
- 221 019c 0030C0E5 		strb	r3, [r0]
- 222 01a0 0300A0E1 		mov	r0, r3
- 223 01a4 1EFF2FE1 		bx	lr
- 225              		.align	2
- 226              		.global	put_string
- 227              		.syntax unified
- 228              		.arm
- 230              	put_string:
- 231              		@ args = 0, pretend = 0, frame = 0
- 232              		@ frame_needed = 0, uses_anonymous_args = 0
- 233              		@ link register save eliminated.
- 234 01a8 0030D0E5 		ldrb	r3, [r0]	@ zero_extendqisi2
- 235 01ac 000053E3 		cmp	r3, #0
- 236 01b0 1EFF2F01 		bxeq	lr
- 237              	.L51:
- 238 01b4 FEFFFFEA 		b	.L51
- 240              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"
+ 184 016c 183092E5 		ldr	r3, [r2, #24]
+ 185 0170 800013E3 		tst	r3, #128
+ 186 0174 FCFFFF1A 		bne	.L35
+ 187 0178 9630A0E3 		mov	r3, #150
+ 188              	.L36:
+ 189 017c 013053E2 		subs	r3, r3, #1
+ 190 0180 FDFFFF1A 		bne	.L36
+ 191 0184 013AA0E3 		mov	r3, #4096
+ 192 0188 203F43E3 		movt	r3, 16160
+ 193 018c 000093E5 		ldr	r0, [r3]
+ 194 0190 C70000E2 		and	r0, r0, #199
+ 195 0194 1EFF2FE1 		bx	lr
+ 197              		.align	2
+ 198              		.global	put_char
+ 199              		.syntax unified
+ 200              		.arm
+ 202              	put_char:
+ 203              		@ args = 0, pretend = 0, frame = 0
+ 204              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205              		@ link register save eliminated.
+ 206 0198 012AA0E3 		mov	r2, #4096
+ 207 019c 202F43E3 		movt	r2, 16160
+ 208              	.L43:
+ 209 01a0 183092E5 		ldr	r3, [r2, #24]
+ 210 01a4 200013E3 		tst	r3, #32
+ 211 01a8 FCFFFF1A 		bne	.L43
+ 212 01ac 9630A0E3 		mov	r3, #150
+ 213              	.L44:
+ 214 01b0 013053E2 		subs	r3, r3, #1
+ 215 01b4 FDFFFF1A 		bne	.L44
+ 216 01b8 013AA0E3 		mov	r3, #4096
+ 217 01bc 203F43E3 		movt	r3, 16160
+ 218 01c0 000083E5 		str	r0, [r3]
+ 219 01c4 1EFF2FE1 		bx	lr
+ 221              		.align	2
+ 222              		.global	get_string
+ 223              		.syntax unified
+ 224              		.arm
+ 226              	get_string:
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229              		@ link register save eliminated.
+ 230 01c8 010051E3 		cmp	r1, #1
+ 231 01cc 0D00000A 		beq	.L56
+ 232 01d0 012AA0E3 		mov	r2, #4096
+ 233 01d4 202F43E3 		movt	r2, 16160
+ 234              	.L53:
+ 235 01d8 183092E5 		ldr	r3, [r2, #24]
+ 236 01dc 800013E3 		tst	r3, #128
+ 237 01e0 9630A003 		moveq	r3, #150
+ 238 01e4 FBFFFF1A 		bne	.L53
+ 239              	.L54:
+ 240 01e8 013053E2 		subs	r3, r3, #1
+ 241 01ec FDFFFF1A 		bne	.L54
+ 242 01f0 011081E2 		add	r1, r1, #1
+ 243 01f4 003092E5 		ldr	r3, [r2]
+ 244 01f8 010051E3 		cmp	r1, #1
+ 245 01fc 3830C3E3 		bic	r3, r3, #56
+ 246 0200 0030C0E5 		strb	r3, [r0]
+ 247 0204 F3FFFF1A 		bne	.L53
+ 248              	.L56:
+ 249 0208 0030A0E3 		mov	r3, #0
+ 250 020c 0030C0E5 		strb	r3, [r0]
+ 251 0210 0300A0E1 		mov	r0, r3
+ 252 0214 1EFF2FE1 		bx	lr
+ 254              		.align	2
+ 255              		.global	put_string
+ 256              		.syntax unified
+ 257              		.arm
+ 259              	put_string:
+ 260              		@ args = 0, pretend = 0, frame = 0
+ 261              		@ frame_needed = 0, uses_anonymous_args = 0
+ 262              		@ link register save eliminated.
+ 263 0218 0030D0E5 		ldrb	r3, [r0]	@ zero_extendqisi2
+ 264 021c 000053E3 		cmp	r3, #0
+ 265 0220 0500000A 		beq	.L65
+ 266 0224 012AA0E3 		mov	r2, #4096
+ 267 0228 202F43E3 		movt	r2, 16160
+ 268 022c 010040E2 		sub	r0, r0, #1
+ 269              	.L68:
+ 270 0230 0110F0E5 		ldrb	r1, [r0, #1]!	@ zero_extendqisi2
+ 271 0234 000051E3 		cmp	r1, #0
+ 272 0238 0500001A 		bne	.L75
+ 273              	.L65:
+ 274 023c 012AA0E3 		mov	r2, #4096
+ 275 0240 202F43E3 		movt	r2, 16160
+ 276              	.L70:
+ 277 0244 183092E5 		ldr	r3, [r2, #24]
+ 278 0248 080013E3 		tst	r3, #8
+ 279 024c FCFFFF1A 		bne	.L70
+ 280 0250 1EFF2FE1 		bx	lr
+ 281              	.L75:
+ 282 0254 183092E5 		ldr	r3, [r2, #24]
+ 283 0258 200013E3 		tst	r3, #32
+ 284 025c FCFFFF1A 		bne	.L75
+ 285 0260 9630A0E3 		mov	r3, #150
+ 286              	.L67:
+ 287 0264 013053E2 		subs	r3, r3, #1
+ 288 0268 FDFFFF1A 		bne	.L67
+ 289 026c 001082E5 		str	r1, [r2]
+ 290 0270 EEFFFFEA 		b	.L68
+ 292              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"

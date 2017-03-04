@@ -169,26 +169,27 @@ void init_uart()
 extern char get_char()
 {
 	// <<Insert polling function here>>
-	
+    wait_for_rx_has_char();
 
 	// Do not remove!!! The RPi UART is a bit... lazy... 
     delay(150);
 	
 	// Read the data register.
     // Only care about the last 8 bits, so mask them off.
-    return (char)(uart[UART0_DR] & 00000000);
+    return (char)(uart[UART0_DR] & 11111111);
 }
 
 /// Writes a single character to the uart port.
 extern void put_char(char c)
 {
 	// <<Insert polling function here>>
-	
+    wait_for_tx_slot();
 	
 	// Do not remove!!! The RPi UART is a bit... lazy... 
     delay(150);
 	
 	// <<Write the character to the data register here.>>
+    uart[UART0_DR] = c;
 	
 }
 
@@ -208,13 +209,15 @@ extern size_t get_string(char* buffer, size_t buffer_size)
     )
     {
         // <<GET THE CHAR HERE>>
+        ch = get_char();
 		
-
         if ((ch != '\n') && (ch != '\r'))
         {
             // <<ECHO THE CHAR HERE>>
             
 			// <<ADD TO BUFFER AND INCREMENT THE BUFFER COUNT>>
+            buffer[count] = ch;
+            buffer_size++;
 			
         }
         // OS dependent.  May get \r, may get \n.  Either way, we'll
@@ -244,6 +247,7 @@ extern void put_string(const char* str)
     for (size_t i = 0; currentChar != '\0'; ++i)
     {
         // << SET CURRENT CHARACTER >>
+        currentChar = str[i];
 
         // Depending on which console is being used, this may
         // or may not be needed.  On linux, we've discovered we can't
@@ -251,7 +255,9 @@ extern void put_string(const char* str)
         if(currentChar!= '\0')
         {
             // << PRINT OUT THE CURRENT CHARACTER >>
+            put_char(currentChar);
         }
     }
     // << INSERT POLLING FUNCTION CALL HERE>>
+    wait_for_uart_idle();
 }

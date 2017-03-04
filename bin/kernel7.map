@@ -1,0 +1,100 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x00008000         0x00018000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/debug.o
+LOAD build/gpio.o
+LOAD build/main.o
+LOAD build/uart.o
+
+.text           0x00008000      0x4d0
+ *(.text*)
+ .text          0x00008000      0x1bc build/debug.o
+                0x000080ac                digit_to_char
+                0x000080d8                convert
+                0x00008108                to_binary_str
+                0x00008144                to_hex_str
+                0x00008180                to_decimal_str
+ .text          0x000081bc       0x4c build/gpio.o
+                0x000081bc                convert_pin_to_gpio
+                0x000081dc                convert_gpio_to_pin
+                0x00008200                mmio_write
+ .text          0x00008208        0x0 build/main.o
+ .text.startup  0x00008208       0x54 build/main.o
+                0x00008208                main
+ .text          0x0000825c      0x274 build/uart.o
+                0x0000825c                wait_for_tx_slot
+                0x00008274                wait_for_uart_idle
+                0x0000828c                wait_for_rx_slot
+                0x000082a4                wait_for_rx_has_char
+                0x000082bc                delay
+                0x000082f0                init_uart
+                0x000083c0                get_char
+                0x000083f4                put_char
+                0x00008424                get_string
+                0x00008474                put_string
+
+.glue_7         0x000084d0        0x0
+ .glue_7        0x000084d0        0x0 linker stubs
+
+.glue_7t        0x000084d0        0x0
+ .glue_7t       0x000084d0        0x0 linker stubs
+
+.vfp11_veneer   0x000084d0        0x0
+ .vfp11_veneer  0x000084d0        0x0 linker stubs
+
+.v4_bx          0x000084d0        0x0
+ .v4_bx         0x000084d0        0x0 linker stubs
+
+.iplt           0x000084d0        0x0
+ .iplt          0x000084d0        0x0 build/gpio.o
+
+.bss            0x000084d0        0x0
+ *(.bss*)
+ .bss           0x000084d0        0x0 build/debug.o
+ .bss           0x000084d0        0x0 build/gpio.o
+ .bss           0x000084d0        0x0 build/main.o
+ .bss           0x000084d0        0x0 build/uart.o
+
+.rodata         0x000084d0       0x14
+ *(.rodata*)
+ .rodata        0x000084d0       0x14 build/main.o
+
+.rel.dyn        0x000084e4        0x0
+ .rel.iplt      0x000084e4        0x0 build/gpio.o
+
+.data           0x000084e4       0x44
+ *(.data*)
+ .data          0x000084e4        0x0 build/debug.o
+ .data          0x000084e4       0x44 build/gpio.o
+                0x000084e4                pin_to_gpio_array
+                0x0000850c                gpio_to_pin_array
+ .data          0x00008528        0x0 build/main.o
+ .data          0x00008528        0x0 build/uart.o
+OUTPUT(build/output.elf elf32-littlearm)
+
+.igot.plt       0x00008528        0x0
+ .igot.plt      0x00008528        0x0 build/gpio.o
+
+.comment        0x00000000       0x2d
+ .comment       0x00000000       0x2d build/debug.o
+                                 0x2e (size before relaxing)
+ .comment       0x0000002d       0x2e build/gpio.o
+ .comment       0x0000002d       0x2e build/main.o
+ .comment       0x0000002d       0x2e build/uart.o
+
+.ARM.attributes
+                0x00000000       0x33
+ .ARM.attributes
+                0x00000000       0x33 build/debug.o
+ .ARM.attributes
+                0x00000033       0x33 build/gpio.o
+ .ARM.attributes
+                0x00000066       0x33 build/main.o
+ .ARM.attributes
+                0x00000099       0x33 build/uart.o

@@ -1,185 +1,177 @@
-   1              		.arch armv7-a
-   2              		.eabi_attribute 28, 1
-   3              		.fpu neon-vfpv4
-   4              		.eabi_attribute 20, 1
-   5              		.eabi_attribute 21, 1
-   6              		.eabi_attribute 23, 3
-   7              		.eabi_attribute 24, 1
-   8              		.eabi_attribute 25, 1
-   9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 2
-  11              		.eabi_attribute 34, 1
-  12              		.eabi_attribute 18, 4
-  13              		.file	"debug.c"
-  14              		.global	__aeabi_uidivmod
-  15              		.global	__aeabi_uidiv
-  16              		.text
-  17              		.align	2
-  18              		.syntax unified
-  19              		.arm
-  21              	convert.part.0:
-  22              		@ args = 0, pretend = 0, frame = 0
-  23              		@ frame_needed = 0, uses_anonymous_args = 0
-  24 0000 F84F2DE9 		push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
-  25 0004 005051E2 		subs	r5, r1, #0
-  26 0008 0280A0E1 		mov	r8, r2
-  27 000c 2800000A 		beq	.L9
-  28 0010 CDAC0CE3 		movw	r10, #52429
-  29 0014 0060A0E1 		mov	r6, r0
-  30 0018 CCAC4CE3 		movt	r10, 52428
-  31 001c 017042E2 		sub	r7, r2, #1
-  32 0020 0040A0E3 		mov	r4, #0
-  33 0024 0AB0A0E3 		mov	fp, #10
-  34 0028 000000EA 		b	.L5
-  35              	.L10:
-  36 002c 0940A0E1 		mov	r4, r9
-  37              	.L5:
-  38 0030 0500A0E1 		mov	r0, r5
-  39 0034 0610A0E1 		mov	r1, r6
-  40 0038 019084E2 		add	r9, r4, #1
-  41 003c FEFFFFEB 		bl	__aeabi_uidivmod
-  42 0040 7110EFE6 		uxtb	r1, r1
-  43 0044 912A83E0 		umull	r2, r3, r1, r10
-  44 0048 090051E3 		cmp	r1, #9
-  45 004c 302081E2 		add	r2, r1, #48
-  46 0050 A301A0E1 		lsr	r0, r3, #3
-  47 0054 7230EFE6 		uxtb	r3, r2
-  48 0058 9B1061E0 		mls	r1, fp, r0, r1
-  49 005c 0500A0E1 		mov	r0, r5
-  50 0060 41108182 		addhi	r1, r1, #65
-  51 0064 7130EF86 		uxtbhi	r3, r1
-  52 0068 0610A0E1 		mov	r1, r6
-  53 006c 0130E7E5 		strb	r3, [r7, #1]!
-  54 0070 FEFFFFEB 		bl	__aeabi_uidiv
-  55 0074 005050E2 		subs	r5, r0, #0
-  56 0078 EBFFFF1A 		bne	.L10
-  57              	.L2:
-  58 007c 043088E0 		add	r3, r8, r4
-  59 0080 030058E1 		cmp	r8, r3
-  60 0084 0600002A 		bcs	.L8
-  61 0088 0820A0E1 		mov	r2, r8
-  62              	.L7:
-  63 008c 0010D2E5 		ldrb	r1, [r2]	@ zero_extendqisi2
-  64 0090 0000D3E5 		ldrb	r0, [r3]	@ zero_extendqisi2
-  65 0094 0100C2E4 		strb	r0, [r2], #1
-  66 0098 011043E4 		strb	r1, [r3], #-1
-  67 009c 030052E1 		cmp	r2, r3
-  68 00a0 F9FFFF3A 		bcc	.L7
-  69              	.L8:
-  70 00a4 0030A0E3 		mov	r3, #0
-  71 00a8 0930C8E7 		strb	r3, [r8, r9]
-  72 00ac 0300A0E1 		mov	r0, r3
-  73 00b0 F88FBDE8 		pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, pc}
-  74              	.L9:
-  75 00b4 0590A0E1 		mov	r9, r5
-  76 00b8 0040E0E3 		mvn	r4, #0
-  77 00bc EEFFFFEA 		b	.L2
-  79              		.align	2
-  80              		.global	digit_to_char
-  81              		.syntax unified
-  82              		.arm
-  84              	digit_to_char:
-  85              		@ args = 0, pretend = 0, frame = 0
-  86              		@ frame_needed = 0, uses_anonymous_args = 0
-  87              		@ link register save eliminated.
-  88 00c0 090050E3 		cmp	r0, #9
-  89 00c4 CD2C0C83 		movwhi	r2, #52429
-  90 00c8 0A10A083 		movhi	r1, #10
-  91 00cc CC2C4C83 		movthi	r2, 52428
-  92 00d0 30008092 		addls	r0, r0, #48
-  93 00d4 90228380 		umullhi	r2, r3, r0, r2
-  94 00d8 A331A081 		lsrhi	r3, r3, #3
-  95 00dc 91036080 		mlshi	r0, r1, r3, r0
-  96 00e0 41008082 		addhi	r0, r0, #65
-  97 00e4 7000EFE6 		uxtb	r0, r0
-  98 00e8 1EFF2FE1 		bx	lr
- 100              		.align	2
- 101              		.global	convert
- 102              		.syntax unified
- 103              		.arm
- 105              	convert:
- 106              		@ args = 0, pretend = 0, frame = 0
- 107              		@ frame_needed = 0, uses_anonymous_args = 0
- 108 00ec 003051E2 		subs	r3, r1, #0
- 109 00f0 10402DE9 		push	{r4, lr}
- 110 00f4 0240A0E1 		mov	r4, r2
- 111 00f8 0200000A 		beq	.L19
- 112 00fc BFFFFFEB 		bl	convert.part.0
- 113 0100 0400A0E1 		mov	r0, r4
- 114 0104 1080BDE8 		pop	{r4, pc}
- 115              	.L19:
- 116 0108 0130C2E5 		strb	r3, [r2, #1]
- 117 010c 3030A0E3 		mov	r3, #48
- 118 0110 0030C2E5 		strb	r3, [r2]
- 119 0114 0400A0E1 		mov	r0, r4
- 120 0118 1080BDE8 		pop	{r4, pc}
- 122              		.align	2
- 123              		.global	to_binary_str
- 124              		.syntax unified
- 125              		.arm
- 127              	to_binary_str:
- 128              		@ args = 0, pretend = 0, frame = 0
- 129              		@ frame_needed = 0, uses_anonymous_args = 0
- 130 011c 000050E3 		cmp	r0, #0
- 131 0120 3030A003 		moveq	r3, #48
- 132 0124 10402DE9 		push	{r4, lr}
- 133 0128 0140A0E1 		mov	r4, r1
- 134 012c 0100C105 		strbeq	r0, [r1, #1]
- 135 0130 0030C105 		strbeq	r3, [r1]
- 136 0134 0100001A 		bne	.L26
- 137 0138 0400A0E1 		mov	r0, r4
- 138 013c 1080BDE8 		pop	{r4, pc}
- 139              	.L26:
- 140 0140 0010A0E1 		mov	r1, r0
- 141 0144 0420A0E1 		mov	r2, r4
- 142 0148 0200A0E3 		mov	r0, #2
- 143 014c ABFFFFEB 		bl	convert.part.0
- 144 0150 0400A0E1 		mov	r0, r4
- 145 0154 1080BDE8 		pop	{r4, pc}
- 147              		.align	2
- 148              		.global	to_hex_str
- 149              		.syntax unified
- 150              		.arm
- 152              	to_hex_str:
- 153              		@ args = 0, pretend = 0, frame = 0
- 154              		@ frame_needed = 0, uses_anonymous_args = 0
- 155 0158 000050E3 		cmp	r0, #0
- 156 015c 3030A003 		moveq	r3, #48
- 157 0160 10402DE9 		push	{r4, lr}
- 158 0164 0140A0E1 		mov	r4, r1
- 159 0168 0100C105 		strbeq	r0, [r1, #1]
- 160 016c 0030C105 		strbeq	r3, [r1]
- 161 0170 0100001A 		bne	.L31
- 162 0174 0400A0E1 		mov	r0, r4
- 163 0178 1080BDE8 		pop	{r4, pc}
- 164              	.L31:
- 165 017c 0010A0E1 		mov	r1, r0
- 166 0180 0420A0E1 		mov	r2, r4
- 167 0184 1000A0E3 		mov	r0, #16
- 168 0188 9CFFFFEB 		bl	convert.part.0
- 169 018c 0400A0E1 		mov	r0, r4
- 170 0190 1080BDE8 		pop	{r4, pc}
- 172              		.align	2
- 173              		.global	to_decimal_str
- 174              		.syntax unified
- 175              		.arm
- 177              	to_decimal_str:
- 178              		@ args = 0, pretend = 0, frame = 0
- 179              		@ frame_needed = 0, uses_anonymous_args = 0
- 180 0194 000050E3 		cmp	r0, #0
- 181 0198 3030A003 		moveq	r3, #48
- 182 019c 10402DE9 		push	{r4, lr}
- 183 01a0 0140A0E1 		mov	r4, r1
- 184 01a4 0100C105 		strbeq	r0, [r1, #1]
- 185 01a8 0030C105 		strbeq	r3, [r1]
- 186 01ac 0100001A 		bne	.L36
- 187 01b0 0400A0E1 		mov	r0, r4
- 188 01b4 1080BDE8 		pop	{r4, pc}
- 189              	.L36:
- 190 01b8 0010A0E1 		mov	r1, r0
- 191 01bc 0420A0E1 		mov	r2, r4
- 192 01c0 0A00A0E3 		mov	r0, #10
- 193 01c4 8DFFFFEB 		bl	convert.part.0
- 194 01c8 0400A0E1 		mov	r0, r4
- 195 01cc 1080BDE8 		pop	{r4, pc}
- 197              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"
+   1              		.arch armv8-a
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 2
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"debug.c"
+  13              		.text
+  14              		.align	2
+  15              		.syntax unified
+  16              		.arm
+  18              	convert.part.0:
+  19              		@ args = 0, pretend = 0, frame = 0
+  20              		@ frame_needed = 0, uses_anonymous_args = 0
+  21 0000 000051E3 		cmp	r1, #0
+  22 0004 F0432DE9 		push	{r4, r5, r6, r7, r8, r9, lr}
+  23 0008 2400000A 		beq	.L9
+  24 000c CD8C0CE3 		movw	r8, #52429
+  25 0010 CC8C4CE3 		movt	r8, 52428
+  26 0014 016042E2 		sub	r6, r2, #1
+  27 0018 00C0A0E3 		mov	ip, #0
+  28 001c 0A90A0E3 		mov	r9, #10
+  29 0020 000000EA 		b	.L5
+  30              	.L10:
+  31 0024 07C0A0E1 		mov	ip, r7
+  32              	.L5:
+  33 0028 11F03EE7 		udiv	lr, r1, r0
+  34 002c 01708CE2 		add	r7, ip, #1
+  35 0030 901E61E0 		mls	r1, r0, lr, r1
+  36 0034 7110EFE6 		uxtb	r1, r1
+  37 0038 090051E3 		cmp	r1, #9
+  38 003c 303081E2 		add	r3, r1, #48
+  39 0040 914885E0 		umull	r4, r5, r1, r8
+  40 0044 7330EFE6 		uxtb	r3, r3
+  41 0048 A531A081 		lsrhi	r3, r5, #3
+  42 004c 99136380 		mlshi	r3, r9, r3, r1
+  43 0050 0E10A0E1 		mov	r1, lr
+  44 0054 41308382 		addhi	r3, r3, #65
+  45 0058 7330EF86 		uxtbhi	r3, r3
+  46 005c 00005EE3 		cmp	lr, #0
+  47 0060 0130E6E5 		strb	r3, [r6, #1]!
+  48 0064 EEFFFF1A 		bne	.L10
+  49              	.L2:
+  50 0068 0CC082E0 		add	ip, r2, ip
+  51 006c 0C0052E1 		cmp	r2, ip
+  52 0070 0600002A 		bcs	.L8
+  53 0074 0230A0E1 		mov	r3, r2
+  54              	.L7:
+  55 0078 0010D3E5 		ldrb	r1, [r3]	@ zero_extendqisi2
+  56 007c 0000DCE5 		ldrb	r0, [ip]	@ zero_extendqisi2
+  57 0080 0100C3E4 		strb	r0, [r3], #1
+  58 0084 01104CE4 		strb	r1, [ip], #-1
+  59 0088 0C0053E1 		cmp	r3, ip
+  60 008c F9FFFF3A 		bcc	.L7
+  61              	.L8:
+  62 0090 0030A0E3 		mov	r3, #0
+  63 0094 0300A0E1 		mov	r0, r3
+  64 0098 0730C2E7 		strb	r3, [r2, r7]
+  65 009c F083BDE8 		pop	{r4, r5, r6, r7, r8, r9, pc}
+  66              	.L9:
+  67 00a0 0170A0E1 		mov	r7, r1
+  68 00a4 00C0E0E3 		mvn	ip, #0
+  69 00a8 EEFFFFEA 		b	.L2
+  71              		.align	2
+  72              		.global	digit_to_char
+  73              		.syntax unified
+  74              		.arm
+  76              	digit_to_char:
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              		@ link register save eliminated.
+  80 00ac 090050E3 		cmp	r0, #9
+  81 00b0 30008092 		addls	r0, r0, #48
+  82 00b4 CD2C0C83 		movwhi	r2, #52429
+  83 00b8 0A10A083 		movhi	r1, #10
+  84 00bc CC2C4C83 		movthi	r2, 52428
+  85 00c0 90228380 		umullhi	r2, r3, r0, r2
+  86 00c4 A331A081 		lsrhi	r3, r3, #3
+  87 00c8 91036080 		mlshi	r0, r1, r3, r0
+  88 00cc 41008082 		addhi	r0, r0, #65
+  89 00d0 7000EFE6 		uxtb	r0, r0
+  90 00d4 1EFF2FE1 		bx	lr
+  92              		.align	2
+  93              		.global	convert
+  94              		.syntax unified
+  95              		.arm
+  97              	convert:
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100 00d8 003051E2 		subs	r3, r1, #0
+ 101 00dc 10402DE9 		push	{r4, lr}
+ 102 00e0 0240A0E1 		mov	r4, r2
+ 103 00e4 0200000A 		beq	.L19
+ 104 00e8 C4FFFFEB 		bl	convert.part.0
+ 105 00ec 0400A0E1 		mov	r0, r4
+ 106 00f0 1080BDE8 		pop	{r4, pc}
+ 107              	.L19:
+ 108 00f4 3020A0E3 		mov	r2, #48
+ 109 00f8 0130C4E5 		strb	r3, [r4, #1]
+ 110 00fc 0400A0E1 		mov	r0, r4
+ 111 0100 0020C4E5 		strb	r2, [r4]
+ 112 0104 1080BDE8 		pop	{r4, pc}
+ 114              		.align	2
+ 115              		.global	to_binary_str
+ 116              		.syntax unified
+ 117              		.arm
+ 119              	to_binary_str:
+ 120              		@ args = 0, pretend = 0, frame = 0
+ 121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122 0108 000050E3 		cmp	r0, #0
+ 123 010c 10402DE9 		push	{r4, lr}
+ 124 0110 0140A0E1 		mov	r4, r1
+ 125 0114 0100C105 		strbeq	r0, [r1, #1]
+ 126 0118 3030A003 		moveq	r3, #48
+ 127 011c 0030C105 		strbeq	r3, [r1]
+ 128 0120 0100001A 		bne	.L26
+ 129 0124 0400A0E1 		mov	r0, r4
+ 130 0128 1080BDE8 		pop	{r4, pc}
+ 131              	.L26:
+ 132 012c 0010A0E1 		mov	r1, r0
+ 133 0130 0420A0E1 		mov	r2, r4
+ 134 0134 0200A0E3 		mov	r0, #2
+ 135 0138 B0FFFFEB 		bl	convert.part.0
+ 136 013c 0400A0E1 		mov	r0, r4
+ 137 0140 1080BDE8 		pop	{r4, pc}
+ 139              		.align	2
+ 140              		.global	to_hex_str
+ 141              		.syntax unified
+ 142              		.arm
+ 144              	to_hex_str:
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147 0144 000050E3 		cmp	r0, #0
+ 148 0148 10402DE9 		push	{r4, lr}
+ 149 014c 0140A0E1 		mov	r4, r1
+ 150 0150 0100C105 		strbeq	r0, [r1, #1]
+ 151 0154 3030A003 		moveq	r3, #48
+ 152 0158 0030C105 		strbeq	r3, [r1]
+ 153 015c 0100001A 		bne	.L31
+ 154 0160 0400A0E1 		mov	r0, r4
+ 155 0164 1080BDE8 		pop	{r4, pc}
+ 156              	.L31:
+ 157 0168 0010A0E1 		mov	r1, r0
+ 158 016c 0420A0E1 		mov	r2, r4
+ 159 0170 1000A0E3 		mov	r0, #16
+ 160 0174 A1FFFFEB 		bl	convert.part.0
+ 161 0178 0400A0E1 		mov	r0, r4
+ 162 017c 1080BDE8 		pop	{r4, pc}
+ 164              		.align	2
+ 165              		.global	to_decimal_str
+ 166              		.syntax unified
+ 167              		.arm
+ 169              	to_decimal_str:
+ 170              		@ args = 0, pretend = 0, frame = 0
+ 171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172 0180 000050E3 		cmp	r0, #0
+ 173 0184 10402DE9 		push	{r4, lr}
+ 174 0188 0140A0E1 		mov	r4, r1
+ 175 018c 0100C105 		strbeq	r0, [r1, #1]
+ 176 0190 3030A003 		moveq	r3, #48
+ 177 0194 0030C105 		strbeq	r3, [r1]
+ 178 0198 0100001A 		bne	.L36
+ 179 019c 0400A0E1 		mov	r0, r4
+ 180 01a0 1080BDE8 		pop	{r4, pc}
+ 181              	.L36:
+ 182 01a4 0010A0E1 		mov	r1, r0
+ 183 01a8 0420A0E1 		mov	r2, r4
+ 184 01ac 0A00A0E3 		mov	r0, #10
+ 185 01b0 92FFFFEB 		bl	convert.part.0
+ 186 01b4 0400A0E1 		mov	r0, r4
+ 187 01b8 1080BDE8 		pop	{r4, pc}
+ 189              		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"
