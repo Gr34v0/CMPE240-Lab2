@@ -16,13 +16,13 @@
   16              		.syntax unified
   17              		.arm
   19              	main:
-  20              		@ args = 0, pretend = 0, frame = 0
+  20              		@ args = 0, pretend = 0, frame = 80
   21              		@ frame_needed = 0, uses_anonymous_args = 0
   22 0000 10402DE9 		push	{r4, lr}
-  23 0004 FEFFFFEB 		bl	init_uart
-  24 0008 000000E3 		movw	r0, #:lower16:.LANCHOR0
-  25 000c 000040E3 		movt	r0, #:upper16:.LANCHOR0
-  26 0010 FEFFFFEB 		bl	put_string
+  23 0004 004000E3 		movw	r4, #:lower16:.LC1
+  24 0008 004040E3 		movt	r4, #:upper16:.LC1
+  25 000c 50D04DE2 		sub	sp, sp, #80
+  26 0010 FEFFFFEB 		bl	init_uart
   27 0014 000000E3 		movw	r0, #:lower16:.LANCHOR0
   28 0018 000040E3 		movt	r0, #:upper16:.LANCHOR0
   29 001c FEFFFFEB 		bl	put_string
@@ -38,15 +38,43 @@
   39 0044 000000E3 		movw	r0, #:lower16:.LANCHOR0
   40 0048 000040E3 		movt	r0, #:upper16:.LANCHOR0
   41 004c FEFFFFEB 		bl	put_string
-  42              	.L2:
-  43 0050 FEFFFFEA 		b	.L2
-  45              		.section	.rodata
-  46              		.align	2
-  47              		.set	.LANCHOR0,. + 0
-  48              	.LC0:
-  49 0000 48656C6C 		.ascii	"Hello, World!\015\012\000\000"
-  49      6F2C2057 
-  49      6F726C64 
-  49      210D0A00 
-  49      00
-  50 0011 000000   		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"
+  42 0050 000000E3 		movw	r0, #:lower16:.LANCHOR0
+  43 0054 000040E3 		movt	r0, #:upper16:.LANCHOR0
+  44 0058 FEFFFFEB 		bl	put_string
+  45              	.L3:
+  46 005c 5010A0E3 		mov	r1, #80
+  47 0060 0D00A0E1 		mov	r0, sp
+  48 0064 FEFFFFEB 		bl	get_string
+  49 0068 000050E3 		cmp	r0, #0
+  50 006c 00008D10 		addne	r0, sp, r0
+  51 0070 0D30A011 		movne	r3, sp
+  52 0074 0700000A 		beq	.L6
+  53              	.L5:
+  54 0078 0020D3E5 		ldrb	r2, [r3]	@ zero_extendqisi2
+  55 007c 013083E2 		add	r3, r3, #1
+  56 0080 611042E2 		sub	r1, r2, #97
+  57 0084 202042E2 		sub	r2, r2, #32
+  58 0088 190051E3 		cmp	r1, #25
+  59 008c 01204395 		strbls	r2, [r3, #-1]
+  60 0090 000053E1 		cmp	r3, r0
+  61 0094 F7FFFF1A 		bne	.L5
+  62              	.L6:
+  63 0098 0D00A0E1 		mov	r0, sp
+  64 009c FEFFFFEB 		bl	put_string
+  65 00a0 0400A0E1 		mov	r0, r4
+  66 00a4 FEFFFFEB 		bl	put_string
+  67 00a8 EBFFFFEA 		b	.L3
+  69              		.section	.rodata
+  70              		.align	2
+  71              		.set	.LANCHOR0,. + 0
+  72              	.LC0:
+  73 0000 48656C6C 		.ascii	"Hello, World!\015\012\000\000"
+  73      6F2C2057 
+  73      6F726C64 
+  73      210D0A00 
+  73      00
+  74 0011 000000   		.section	.rodata.str1.4,"aMS",%progbits,1
+  75              		.align	2
+  76              	.LC1:
+  77 0000 0D0A00   		.ascii	"\015\012\000"
+  78 0003 00       		.ident	"GCC: (Linaro GCC 5.3-2016.02) 5.3.1 20160113"

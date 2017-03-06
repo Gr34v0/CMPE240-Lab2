@@ -84,10 +84,10 @@ void init_uart()
     // that GPIO 14 is TXD, GPIO 15 is RXD, and they must be set
     // to use alternate function 0 in select register 1.
     // The bits must be set to 100 for GPIO 15 and 14.
-    //gpio[GPFSEL1] |= 0x2000;
-    gpio[GPFSEL1] |= (100 << 12) ; //I used bitshifting as opposed to 
-                                   //a hex value because I'm not totally comfortable with 
-                                   //using a raw hex value like that. I think it's 0x2000
+    gpio[GPFSEL1] |= (0x24 << 14);
+    //gpio[GPFSEL1] |= ((1 << 17) | (1 << 14));   //I used bitshifting as opposed to 
+                                                //a hex value because I'm not totally comfortable with 
+                                                //using a raw hex value like that. I think it's 0x2000
 
     // According to the BCM2835 manual page 185, we
     // need to do the following to enable UART.
@@ -113,7 +113,7 @@ void init_uart()
 
     gpio[GPPUD] = 0;
     delay(150);
-    gpio[GPPUDCLK0] = (1<<14)|(1<<15);
+    gpio[GPPUDCLK0] |= (1<<14)|(1<<15);
     delay(150);
     gpio[GPPUDCLK0] = 0; // Writing zero apparently makes it take affect.
 
@@ -144,8 +144,9 @@ void init_uart()
 	*/
 	
     //Enable FIFOs and set word length by shifting in '1's
-    uart[UART0_LCRH] |= (0x10) |
-						(0x60); // BCM2835 Manual page 184
+    uart[UART0_LCRH] |= (1 << 4) |
+						(1 << 5) |
+                        (1 << 6); // BCM2835 Manual page 184
 
     // Mask all interrupts
     uart[UART0_IMSC] |= (
@@ -160,9 +161,9 @@ void init_uart()
 	*/
 	
     // Enable Receive, Enable Tx, Enable UART.
-    uart[UART0_CR] |= ((0x100) | //00000000000000000000000100000000
-					   (0x80) |  //00000000000000000000000010000000
-					   (0x1));   //00000000000000000000000000000001
+    uart[UART0_CR] |= ((1 << 9) | 
+					   (1 << 8) |
+					   (1 << 0)); 
 }
 
 /// Gets a single character from the UART port.
@@ -175,8 +176,8 @@ extern char get_char()
     delay(150);
 	
 	// Read the data register.
-    // Only care about the last 8 bits, so mask them off.
-    return (char)(uart[UART0_DR] & 11111111);
+    // Only care about the last 8 bits, so mask off the others.
+    return (char)(uart[UART0_DR] & 0xFF);
 }
 
 /// Writes a single character to the uart port.
@@ -214,10 +215,11 @@ extern size_t get_string(char* buffer, size_t buffer_size)
         if ((ch != '\n') && (ch != '\r'))
         {
             // <<ECHO THE CHAR HERE>>
+            put_char(ch);
             
 			// <<ADD TO BUFFER AND INCREMENT THE BUFFER COUNT>>
             buffer[count] = ch;
-            buffer_size++;
+            count++;
 			
         }
         // OS dependent.  May get \r, may get \n.  Either way, we'll
@@ -252,7 +254,7 @@ extern void put_string(const char* str)
         // Depending on which console is being used, this may
         // or may not be needed.  On linux, we've discovered we can't
         // send null characters or the formatting is all wrong.
-        if(currentChar!= '\0')
+        if(currentChar != '\0')
         {
             // << PRINT OUT THE CURRENT CHARACTER >>
             put_char(currentChar);
@@ -260,4 +262,5 @@ extern void put_string(const char* str)
     }
     // << INSERT POLLING FUNCTION CALL HERE>>
     wait_for_uart_idle();
+    
 }
